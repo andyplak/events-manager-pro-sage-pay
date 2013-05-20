@@ -152,53 +152,11 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$intRandNum = rand(0,32000)*rand(0,32000);
 		$strVendorTxCode= $EM_Booking->booking_id . "-" . $strTimeStamp . "-" . $intRandNum;
 
-
-		/** Now to calculate the transaction total based on basket contents.  For security **
-		*** we recalculate it here rather than relying on totals stored in the session or hidden fields **
-		*** We'll also create the basket contents to pass to Form. See the Form Protocol for **
-		*** the full valid basket format.  The code below converts from our "x of y" style into **
-		*** the system basket format (using a 17.5% VAT calculation for the tax columns) **/
-		/*
-		$sngTotal=0.0;
-		$strThisEntry=$strCart;
-		$strBasket="";
-		$iBasketItems=0;
-
-		while (strlen($strThisEntry)>0) {
-			// Extract the Quantity and Product from the list of "x of y," entries in the cart
-			$iQuantity=cleanInput(substr($strThisEntry,0,1), CLEAN_INPUT_FILTER_NUMERIC);
-			$iProductId=substr($strThisEntry,strpos($strThisEntry,",")-1,1);
-			// Add another item to our Form basket
-			$iBasketItems=$iBasketItems+1;
-
-			$sngTotal=$sngTotal + $iQuantity * $arrProducts[$iProductId-1][1];
-			$strBasket=$strBasket . ":" . $arrProducts[$iProductId-1][0] . ":" . $iQuantity;
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]/1.175,2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]*7/47,2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1],2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]*$iQuantity,2);
-
-			// Move to the next cart entry, if there is one
-			$pos=strpos($strThisEntry,",");
-			if ($pos==0)
-				$strThisEntry="";
-			else
-				$strThisEntry=substr($strThisEntry,strpos($strThisEntry,",")+1);
-		}
-
-		// We've been right through the cart, so add delivery to the total and the basket
-		$sngTotal=$sngTotal+1.50;
-		$strBasket=$iBasketItems+1 . $strBasket . ":Delivery:1:1.50:---:1.50:1.50";
-		*/
-
-
 		$price = 0;
 		$count = 1;
-		$strBasket = '';
 
 		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
 			$price += $EM_Ticket_Booking->get_ticket()->get_price() * $EM_Ticket_Booking->get_spaces();
-			$strBasket .= ":" . wp_kses_data($EM_Ticket_Booking->get_ticket()->name);
 			$count++;
 		}
 
@@ -352,8 +310,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		if (strlen($strDeliveryState) > 0) $strPost=$strPost . "&DeliveryState=" . $strDeliveryState;
 		if (strlen($strDeliveryPhone) > 0) $strPost=$strPost . "&DeliveryPhone=" . $strDeliveryPhone;
 		*/
-
-		//$strPost=$strPost . "&Basket=" . $strBasket; // As created above
 
 		// For charities registered for Gift Aid, set to 1 to display the Gift Aid check box on the payment pages
 		$strPost=$strPost . "&AllowGiftAid=0";
