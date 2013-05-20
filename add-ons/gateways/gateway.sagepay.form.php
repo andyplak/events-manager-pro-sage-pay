@@ -152,14 +152,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$intRandNum = rand(0,32000)*rand(0,32000);
 		$strVendorTxCode= $EM_Booking->booking_id . "-" . $strTimeStamp . "-" . $intRandNum;
 
-		$price = 0;
-		$count = 1;
-
-		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
-			$price += $EM_Ticket_Booking->get_ticket()->get_price() * $EM_Ticket_Booking->get_spaces();
-			$count++;
-		}
-
 		// Now to build the Form crypt field.  For more details see the Form Protocol 2.23
 		$strPost="VendorTxCode=" . $strVendorTxCode; /** As generated above **/
 
@@ -168,7 +160,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		    $strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
 		}
 
-		$strPost=$strPost . "&Amount=" . number_format($price, 2); // Formatted to 2 decimal places with leading digit
+		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 		$strPost=$strPost . "&Currency=" . get_option('dbem_bookings_currency', 'GBP');
 
 		// Up to 100 chars of free format description
