@@ -269,48 +269,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 		$strPost.= $delivery;
 
-
-/*  Pre 1.2
-
-		// Billing Details:
-		$booking_meta = $EM_Booking->booking_meta['booking'];
-
-		// Sanitise country codes (EM Countries gives options for England, Scotland, Wales and Northern Ireland which are not ISO compliant and are rejected by Sage).
-		if( $booking_meta['country'] == 'XE' || $booking_meta['country'] == 'XI' || $booking_meta['country'] == 'XS' || $booking_meta['country'] == 'XW') {
-			$booking_meta['country'] = 'GB';
-		}
-
-		$strPost=$strPost . "&BillingFirstnames=" . $EM_Booking->get_person()->user_firstname;
-		$strPost=$strPost . "&BillingSurname=" . $EM_Booking->get_person()->user_lastname;
-		$strPost=$strPost . "&BillingAddress1=" . $booking_meta['address_1'];
-
-		if ( strlen( $booking_meta['billing_address_2'] ) > 0) {
-			$strPost=$strPost . "&BillingAddress2=" . $booking_meta['address_2'];
-		}
-
-		$strPost=$strPost . "&BillingCity=" . $booking_meta['city'];
-		$strPost=$strPost . "&BillingPostCode=" . $booking_meta['postcode'];
-		$strPost=$strPost . "&BillingCountry=" . $booking_meta['country'];
-		/*
-		if (strlen($strBillingState) > 0) $strPost=$strPost . "&BillingState=" . $strBillingState;
-		if (strlen($strBillingPhone) > 0) $strPost=$strPost . "&BillingPhone=" . $strBillingPhone;
-		*/
-/*
-		// Delivery Details: (same as billing as we are not posting anything)
-		$strPost=$strPost . "&DeliveryFirstnames=" . $EM_Booking->get_person()->user_firstname;
-		$strPost=$strPost . "&DeliverySurname=" . $EM_Booking->get_person()->user_lastname;
-		$strPost=$strPost . "&DeliveryAddress1=" . $booking_meta['address_1'];
-		if ( strlen( $booking_meta['address_2'] ) > 0) {
-			$strPost=$strPost . "&DeliveryAddress2=" . $booking_meta['address_2'];
-		}
-		$strPost=$strPost . "&DeliveryCity=" . $booking_meta['city'];
-		$strPost=$strPost . "&DeliveryPostCode=" . $booking_meta['postcode'];
-		$strPost=$strPost . "&DeliveryCountry=" . $booking_meta['country'];
-		/*
-		if (strlen($strDeliveryState) > 0) $strPost=$strPost . "&DeliveryState=" . $strDeliveryState;
-		if (strlen($strDeliveryPhone) > 0) $strPost=$strPost . "&DeliveryPhone=" . $strDeliveryPhone;
-		*/
-
 		// For charities registered for Gift Aid, set to 1 to display the Gift Aid check box on the payment pages
 		$strPost=$strPost . "&AllowGiftAid=0";
 
