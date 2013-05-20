@@ -9,6 +9,7 @@ Author: Andy Place
 Author URI: http://www.andyplace.co.uk
 
 1.5		Support for multiple bookings
+		Support for coupons
 
 1.4.3 	Fix for 1.4.2 that was missing Liams tweaks from 1.4.1. (Due to Divergence at 1.4 / 1.4.1 as claimed not required)
 
