@@ -238,20 +238,12 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
         	$strPost.= "&BillingPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
         	$delivery.= "&DeliveryPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
         }
-        // Added in v1.3. Required for US card holders apparently.
-        /*
-		if( EM_Gateways::get_customer_field('state', $EM_Booking) != '' ) {
-			$strPost.= "&BillingState=" . EM_Gateways::get_customer_field('state', $EM_Booking);
-			$strPost.= "&DeliveryState=" . EM_Gateways::get_customer_field('state', $EM_Booking);
-		}
-		*/
 
 		// tmp workaround for us state. v1.3
 		if( isset( $EM_Booking->booking_meta['booking']['us_state'] ) ) {
 			$strPost.= "&BillingState=" . $EM_Booking->booking_meta['booking']['us_state'];
 			$strPost.= "&DeliveryState=" . $EM_Booking->booking_meta['booking']['us_state'];
 		}
-
 
         if( EM_Gateways::get_customer_field('country', $EM_Booking) != '' ){
 			$countries = em_get_countries();
