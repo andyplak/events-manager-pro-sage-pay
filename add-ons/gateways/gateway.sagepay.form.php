@@ -7,6 +7,8 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 	var $status_txt = 'Awaiting Sage Pay Payment';
 	var $button_enabled = true;
 	var $payment_return = true;
+	var $supports_multiple_bookings = true;
+
 
 	/**
 	 * Sets up gateaway and adds relevant actions/filters
@@ -469,7 +471,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		// Load the relevant booking
 		$arrVendorTxCode = explode( '-', $strVendorTxCode );
 
-		$EM_Booking = new EM_Booking( $arrVendorTxCode[0] );
+		$EM_Booking = em_get_booking( $arrVendorTxCode[0] );
 
 		// Data we can't get from sage
 		$timestamp = date('Y-m-d H:i:s');  // We have no timestamp from sage, so take now
