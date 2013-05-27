@@ -160,9 +160,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		    $strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
 		}
 
-
-
-
 		// Create basket for Sage Reconilation
 		$strBasket = '';
 		// Basket item seperator expected by sage
@@ -196,31 +193,14 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 			}
 		}
 
-
 		// strip off final seperator
 
 		$strBasket = substr( $strBasket, 0, -( strlen( $bask_sep ) ) );
-
-/*
-		//calculate discounts, if any:
-		$discount = $EM_Booking->get_price_discounts_amount('pre') + $EM_Booking->get_price_discounts_amount('post');
-		if( $discount > 0 ){
-			$paypal_vars['discount_amount_cart'] = $discount;
-		}
-*/
 
 		// prepend basket count to strBasket
 		$strBasket = $count.$bask_sep.$strBasket;
 
 		$strPost=$strPost . "&Basket=" . $strBasket;
-
-
-
-
-
-
-
-
 
 		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 		$strPost=$strPost . "&Currency=" . get_option('dbem_bookings_currency', 'GBP');
