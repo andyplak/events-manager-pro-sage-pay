@@ -176,8 +176,15 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		    $price = $EM_Ticket_Booking->get_price() / $spaces;
 
 			if( $price > 0 ){
+
+				// Look for custom attribute that allows Sage stock reconciliation
+				$sage_prod_id = '';
+				if( array_key_exists('sage_prod_id', $EM_Ticket_Booking->get_booking()->get_event()->event_attributes ) ) {
+					$sage_prod_id = '['.$EM_Ticket_Booking->get_booking()->get_event()->event_attributes['sage_prod_id'].']';
+				}
+
 				// Item Description
-				$strBasket .= strip_tags( $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name ) . $bask_sep;
+				$strBasket .= strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name ) . $bask_sep;
 				// Quantity
 				$strBasket .= $spaces . $bask_sep;
 				// Item Value
@@ -665,6 +672,11 @@ Events Manager
 		  </tr>
 		</tbody>
 		</table>
+
+		<h3><?php _e('Sage Stock Reconciliation'); ?></h3>
+
+		<p><?php _e('It is possible to enable stock reconciliation via Sage Pay and Sage accounting products by adding Sage defined Product ids to events. These will then be transmitted to Sage Pay as part of the basket breakdown submitted to Sage Pay.') ?></p>
+		<p><?php _e('To make use of this feature, Enable Event Attributes via the settings page and add the attribute #_ATT{sage_prod_id}. This will then be able to define the product id per event so that this matches the settings within the Sage Accountancy Software.') ?></p>
 		<?php
 	}
 

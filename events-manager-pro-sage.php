@@ -8,7 +8,7 @@ Depends: Events Manager Pro
 Author: Andy Place
 Author URI: http://www.andyplace.co.uk
 
-1.5.1  	Basket breakdown passed to sagepay
+1.5.1  	Basket breakdown passed to sagepay, with opional stock reconciliation
 
 1.5		Support for multiple bookings
 		Support for coupons
