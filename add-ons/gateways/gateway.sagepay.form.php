@@ -160,6 +160,68 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		    $strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
 		}
 
+
+
+
+		// Create basket for Sage Reconilation
+		$strBasket = '';
+		// Basket item seperator expected by sage
+		$bask_sep = ':';
+
+		$count = 0;
+		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
+
+		    // divide price by spaces for per-ticket price
+		    // we divide this way rather than by $EM_Ticket because that can be changed by user in future,
+		    // yet $EM_Ticket_Booking will change if booking itself is saved.
+
+			$spaces = $EM_Ticket_Booking->get_spaces();
+		    $price = $EM_Ticket_Booking->get_price() / $spaces;
+
+			if( $price > 0 ){
+				// Item Description
+				$strBasket .= strip_tags( $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name ) . $bask_sep;
+				// Quantity
+				$strBasket .= $spaces . $bask_sep;
+				// Item Value
+				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
+				// Item Tax
+				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
+				// Item Total
+				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
+				// Line Total
+				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
+
+				$count++;
+			}
+		}
+
+
+		// strip off final seperator
+
+		$strBasket = substr( $strBasket, 0, -( strlen( $bask_sep ) ) );
+
+/*
+		//calculate discounts, if any:
+		$discount = $EM_Booking->get_price_discounts_amount('pre') + $EM_Booking->get_price_discounts_amount('post');
+		if( $discount > 0 ){
+			$paypal_vars['discount_amount_cart'] = $discount;
+		}
+*/
+
+		// prepend basket count to strBasket
+		$strBasket = $count.$bask_sep.$strBasket;
+
+		$strPost=$strPost . "&Basket=" . $strBasket;
+
+
+
+
+
+
+
+
+
 		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 		$strPost=$strPost . "&Currency=" . get_option('dbem_bookings_currency', 'GBP');
 
