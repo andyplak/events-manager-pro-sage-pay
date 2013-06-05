@@ -7,6 +7,8 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 	var $status_txt = 'Awaiting Sage Pay Payment';
 	var $button_enabled = true;
 	var $payment_return = true;
+	var $supports_multiple_bookings = true;
+
 
 	/**
 	 * Sets up gateaway and adds relevant actions/filters
@@ -150,56 +152,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$intRandNum = rand(0,32000)*rand(0,32000);
 		$strVendorTxCode= $EM_Booking->booking_id . "-" . $strTimeStamp . "-" . $intRandNum;
 
-
-		/** Now to calculate the transaction total based on basket contents.  For security **
-		*** we recalculate it here rather than relying on totals stored in the session or hidden fields **
-		*** We'll also create the basket contents to pass to Form. See the Form Protocol for **
-		*** the full valid basket format.  The code below converts from our "x of y" style into **
-		*** the system basket format (using a 17.5% VAT calculation for the tax columns) **/
-		/*
-		$sngTotal=0.0;
-		$strThisEntry=$strCart;
-		$strBasket="";
-		$iBasketItems=0;
-
-		while (strlen($strThisEntry)>0) {
-			// Extract the Quantity and Product from the list of "x of y," entries in the cart
-			$iQuantity=cleanInput(substr($strThisEntry,0,1), CLEAN_INPUT_FILTER_NUMERIC);
-			$iProductId=substr($strThisEntry,strpos($strThisEntry,",")-1,1);
-			// Add another item to our Form basket
-			$iBasketItems=$iBasketItems+1;
-
-			$sngTotal=$sngTotal + $iQuantity * $arrProducts[$iProductId-1][1];
-			$strBasket=$strBasket . ":" . $arrProducts[$iProductId-1][0] . ":" . $iQuantity;
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]/1.175,2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]*7/47,2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1],2);
-			$strBasket=$strBasket . ":" . number_format($arrProducts[$iProductId-1][1]*$iQuantity,2);
-
-			// Move to the next cart entry, if there is one
-			$pos=strpos($strThisEntry,",");
-			if ($pos==0)
-				$strThisEntry="";
-			else
-				$strThisEntry=substr($strThisEntry,strpos($strThisEntry,",")+1);
-		}
-
-		// We've been right through the cart, so add delivery to the total and the basket
-		$sngTotal=$sngTotal+1.50;
-		$strBasket=$iBasketItems+1 . $strBasket . ":Delivery:1:1.50:---:1.50:1.50";
-		*/
-
-
-		$price = 0;
-		$count = 1;
-		$strBasket = '';
-
-		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
-			$price += $EM_Ticket_Booking->get_ticket()->get_price() * $EM_Ticket_Booking->get_spaces();
-			$strBasket .= ":" . wp_kses_data($EM_Ticket_Booking->get_ticket()->name);
-			$count++;
-		}
-
 		// Now to build the Form crypt field.  For more details see the Form Protocol 2.23
 		$strPost="VendorTxCode=" . $strVendorTxCode; /** As generated above **/
 
@@ -208,7 +160,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		    $strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
 		}
 
-		$strPost=$strPost . "&Amount=" . number_format($price, 2); // Formatted to 2 decimal places with leading digit
+		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 		$strPost=$strPost . "&Currency=" . get_option('dbem_bookings_currency', 'GBP');
 
 		// Up to 100 chars of free format description
@@ -278,20 +230,12 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
         	$strPost.= "&BillingPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
         	$delivery.= "&DeliveryPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
         }
-        // Added in v1.3. Required for US card holders apparently.
-        /*
-		if( EM_Gateways::get_customer_field('state', $EM_Booking) != '' ) {
-			$strPost.= "&BillingState=" . EM_Gateways::get_customer_field('state', $EM_Booking);
-			$strPost.= "&DeliveryState=" . EM_Gateways::get_customer_field('state', $EM_Booking);
-		}
-		*/
 
 		// tmp workaround for us state. v1.3
 		if( isset( $EM_Booking->booking_meta['booking']['us_state'] ) ) {
 			$strPost.= "&BillingState=" . $EM_Booking->booking_meta['booking']['us_state'];
 			$strPost.= "&DeliveryState=" . $EM_Booking->booking_meta['booking']['us_state'];
 		}
-
 
         if( EM_Gateways::get_customer_field('country', $EM_Booking) != '' ){
 			$countries = em_get_countries();
@@ -308,50 +252,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		}
 
 		$strPost.= $delivery;
-
-
-/*  Pre 1.2
-
-		// Billing Details:
-		$booking_meta = $EM_Booking->booking_meta['booking'];
-
-		// Sanitise country codes (EM Countries gives options for England, Scotland, Wales and Northern Ireland which are not ISO compliant and are rejected by Sage).
-		if( $booking_meta['country'] == 'XE' || $booking_meta['country'] == 'XI' || $booking_meta['country'] == 'XS' || $booking_meta['country'] == 'XW') {
-			$booking_meta['country'] = 'GB';
-		}
-
-		$strPost=$strPost . "&BillingFirstnames=" . $EM_Booking->get_person()->user_firstname;
-		$strPost=$strPost . "&BillingSurname=" . $EM_Booking->get_person()->user_lastname;
-		$strPost=$strPost . "&BillingAddress1=" . $booking_meta['address_1'];
-
-		if ( strlen( $booking_meta['billing_address_2'] ) > 0) {
-			$strPost=$strPost . "&BillingAddress2=" . $booking_meta['address_2'];
-		}
-
-		$strPost=$strPost . "&BillingCity=" . $booking_meta['city'];
-		$strPost=$strPost . "&BillingPostCode=" . $booking_meta['postcode'];
-		$strPost=$strPost . "&BillingCountry=" . $booking_meta['country'];
-		/*
-		if (strlen($strBillingState) > 0) $strPost=$strPost . "&BillingState=" . $strBillingState;
-		if (strlen($strBillingPhone) > 0) $strPost=$strPost . "&BillingPhone=" . $strBillingPhone;
-		*/
-/*
-		// Delivery Details: (same as billing as we are not posting anything)
-		$strPost=$strPost . "&DeliveryFirstnames=" . $EM_Booking->get_person()->user_firstname;
-		$strPost=$strPost . "&DeliverySurname=" . $EM_Booking->get_person()->user_lastname;
-		$strPost=$strPost . "&DeliveryAddress1=" . $booking_meta['address_1'];
-		if ( strlen( $booking_meta['address_2'] ) > 0) {
-			$strPost=$strPost . "&DeliveryAddress2=" . $booking_meta['address_2'];
-		}
-		$strPost=$strPost . "&DeliveryCity=" . $booking_meta['city'];
-		$strPost=$strPost . "&DeliveryPostCode=" . $booking_meta['postcode'];
-		$strPost=$strPost . "&DeliveryCountry=" . $booking_meta['country'];
-		/*
-		if (strlen($strDeliveryState) > 0) $strPost=$strPost . "&DeliveryState=" . $strDeliveryState;
-		if (strlen($strDeliveryPhone) > 0) $strPost=$strPost . "&DeliveryPhone=" . $strDeliveryPhone;
-		*/
-
-		//$strPost=$strPost . "&Basket=" . $strBasket; // As created above
 
 		// For charities registered for Gift Aid, set to 1 to display the Gift Aid check box on the payment pages
 		$strPost=$strPost . "&AllowGiftAid=0";
@@ -469,7 +369,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		// Load the relevant booking
 		$arrVendorTxCode = explode( '-', $strVendorTxCode );
 
-		$EM_Booking = new EM_Booking( $arrVendorTxCode[0] );
+		$EM_Booking = em_get_booking( $arrVendorTxCode[0] );
 
 		// Data we can't get from sage
 		$timestamp = date('Y-m-d H:i:s');  // We have no timestamp from sage, so take now
