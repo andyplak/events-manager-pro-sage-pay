@@ -210,7 +210,10 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strPost=$strPost . "&Basket=" . $strBasket;
 
 		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
-		$strPost=$strPost . "&Currency=" . get_option('dbem_bookings_currency', 'GBP');
+
+		$currency = get_option('dbem_bookings_currency', 'GBP');
+		$currency = apply_filters('em_gateway_sage_get_currency', $currency, $EM_Booking );
+		$strPost=$strPost . "&Currency=" . $currency;
 
 		// Up to 100 chars of free format description
 		// Changed for v1.3.1: With site url in description, it can easily surpass the 100 chars.
@@ -422,7 +425,8 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 		// Data we can't get from sage
 		$timestamp = date('Y-m-d H:i:s');  // We have no timestamp from sage, so take now
-		$currency = get_option('dbem_bookings_currency','USD');
+		$currency = get_option('dbem_bookings_currency','GBP');
+		$currency = apply_filters('em_gateway_sage_get_currency', $currency, $EM_Booking );
 
 		if( !empty($EM_Booking->booking_id) ){
 			//booking exists
@@ -590,7 +594,7 @@ Events Manager
 		  </tr>
 		  <tr valign="top">
 			  <th scope="row"><?php _e('Sage Pay Currency', 'em-pro') ?></th>
-			  <td><?php echo esc_html(get_option('dbem_bookings_currency','USD')); ?><br /><i><?php echo sprintf(__('Set your currency in the <a href="%s">settings</a> page.','dbem'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></i></td>
+			  <td><?php echo esc_html(get_option('dbem_bookings_currency','GBP')); ?><br /><i><?php echo sprintf(__('Set your currency in the <a href="%s">settings</a> page.','dbem'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></i></td>
 		  </tr>
 		  <tr valign="top">
 			  <th scope="row"><?php _e('Sage Pay Transaction Type', 'em-pro') ?></th>
