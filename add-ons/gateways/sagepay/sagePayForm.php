@@ -147,6 +147,7 @@ class SagePayForm {
 		// If it's present
 	    if ($start !== false){
 	      // Record position and token name
+	      $resultArray[$i] = new stdClass();
 	      $resultArray[$i]->start = $start;
 	      $resultArray[$i]->token = $Tokens[$i];
 	    }
