@@ -218,8 +218,11 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		// Up to 100 chars of free format description
 		// Changed for v1.3.1: With site url in description, it can easily surpass the 100 chars.
 		// Need a proper fix to strip the string at 100 chars.
-		//$strPost=$strPost . "&Description=Event Tickets for " . $EM_Booking->get_event()->event_name . " from ".get_bloginfo('name');
-		$strPost=$strPost . "&Description=Event Tickets for " . $EM_Booking->get_event()->event_name;
+		$desc = $EM_Booking->get_event()->event_name;
+		if( strlen( $desc ) > 100 ) {
+			$desc = substr( $desc, 0, 99 );
+		}
+		$strPost=$strPost . "&Description=" . $desc;
 
 		$strPost=$strPost . "&SuccessURL=" . $this->get_payment_return_url();
 		$strPost=$strPost . "&FailureURL=" . $this->get_payment_return_url();
