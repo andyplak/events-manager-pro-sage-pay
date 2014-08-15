@@ -184,7 +184,9 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 				}
 
 				// Item Description
-				$strBasket .= strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name ) . $bask_sep;
+				$strBasket .= strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
+				$strBasket  = str_replace($bask_sep, ' ', $strBasket ); // Remove any colons from within the event and ticket names
+				$strBasket .= $bask_sep;
 				// Quantity
 				$strBasket .= $spaces . $bask_sep;
 				// Item Value
