@@ -230,7 +230,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strPost=$strPost . "&FailureURL=" . $this->get_payment_return_url();
 
 		// This is an Optional setting. Here we are just using the Billing names given.
-		$strPost=$strPost . "&CustomerName=" . $EM_Booking->get_person()->user_firstname . " " . $EM_Booking->get_person()->user_lastname;
+		$strPost=$strPost . "&CustomerName=" . substr( $EM_Booking->get_person()->user_firstname . " " . $EM_Booking->get_person()->user_lastname, 0, 100);
 
 		/* Email settings:
 		** Flag 'SendEMail' is an Optional setting.
@@ -260,32 +260,32 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$names = explode(' ', $EM_Booking->get_person()->get_name());
 
         if( !empty($names[0]) ) {
-        	$strPost.= "&BillingFirstnames=" . $names[0];
-        	$delivery.= "&DeliveryFirstnames=" . array_shift($names);
+        	$strPost.= "&BillingFirstnames=" . substr( $names[0], 0, 20);
+        	$delivery.= "&DeliveryFirstnames=" . substr( array_shift($names), 0, 20);
         }
         if( implode(' ',$names) != '' ) {
-        	$strPost.= "&BillingSurname=" . implode(' ',$names);
-        	$delivery.= "&DeliverySurname=" . implode(' ',$names);
+        	$strPost.= "&BillingSurname=" . substr( implode(' ',$names), 0, 20);
+        	$delivery.= "&DeliverySurname=" . substr( implode(' ',$names), 0, 20);
         }else{
         	// Must have a value for this, so just use username if we don't have a surname
-        	$strPost.= "&BillingSurname=" . $EM_Booking->get_person()->get_name();
-        	$delivery.= "&DeliverySurname=" . $EM_Booking->get_person()->get_name();
+        	$strPost.= "&BillingSurname=" . substr( $EM_Booking->get_person()->get_name(), 0, 20);
+        	$delivery.= "&DeliverySurname=" . substr( $EM_Booking->get_person()->get_name(), 0, 20);
         }
         if( EM_Gateways::get_customer_field('address', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingAddress1=" . EM_Gateways::get_customer_field('address', $EM_Booking);
-        	$delivery.= "&DeliveryAddress1=" . EM_Gateways::get_customer_field('address', $EM_Booking);
+        	$strPost.= "&BillingAddress1=" . substr( EM_Gateways::get_customer_field('address', $EM_Booking), 0, 100);
+        	$delivery.= "&DeliveryAddress1=" . substr( EM_Gateways::get_customer_field('address', $EM_Booking), 0, 100);
         }
         if( EM_Gateways::get_customer_field('address_2', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingAddress2=" . EM_Gateways::get_customer_field('address_2', $EM_Booking);
-        	$delivery.= "&DeliveryAddress2=" . EM_Gateways::get_customer_field('address_2', $EM_Booking);
+        	$strPost.= "&BillingAddress2=" . substr( EM_Gateways::get_customer_field('address_2', $EM_Booking), 0, 100);
+        	$delivery.= "&DeliveryAddress2=" . substr( EM_Gateways::get_customer_field('address_2', $EM_Booking), 0, 100);
         }
         if( EM_Gateways::get_customer_field('city', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingCity=" . EM_Gateways::get_customer_field('city', $EM_Booking);
-        	$delivery.= "&DeliveryCity=" . EM_Gateways::get_customer_field('city', $EM_Booking);
+        	$strPost.= "&BillingCity=" . substr( EM_Gateways::get_customer_field('city', $EM_Booking), 0, 40);
+        	$delivery.= "&DeliveryCity=" . substr( EM_Gateways::get_customer_field('city', $EM_Booking), 0, 40);
         }
         if( EM_Gateways::get_customer_field('zip', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
-        	$delivery.= "&DeliveryPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
+        	$strPost.= "&BillingPostCode=" . substr( EM_Gateways::get_customer_field('zip', $EM_Booking), 0 , 10);
+        	$delivery.= "&DeliveryPostCode=" . substr( EM_Gateways::get_customer_field('zip', $EM_Booking), 0 , 10);
         }
 
 		// tmp workaround for us state. v1.3

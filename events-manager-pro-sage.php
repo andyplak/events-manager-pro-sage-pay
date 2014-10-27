@@ -3,10 +3,12 @@
 Plugin Name: Events Manager Pro - Sage Pay Form Gateway
 Plugin URI: http://wp-events-plugin.com
 Description: Sage Pay Form gateway pluging for Events Manager Pro
-Version: 1.5.2
+Version: 1.5.3
 Depends: Events Manager Pro
 Author: Andy Place
 Author URI: http://www.andyplace.co.uk
+
+1.5.3   Enforce SagePay field limits
 
 1.5.2   Currency filter to enable currency to be modified. Allow clever stuff like currency per ticket / event
 
