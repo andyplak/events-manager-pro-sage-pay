@@ -157,7 +157,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 		// Optional: If you are a Sage Pay Partner and wish to flag the transactions with your unique partner id, it should be passed here
 		if ( strlen( get_option('em_'. $this->gateway . "_partner_id" ) ) > 0) {
-		    $strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
+				$strPost=$strPost . "&ReferrerID=" . get_option('em_'. $this->gateway . "_partner_id" );
 		}
 
 		// Create basket for Sage Reconilation
@@ -168,12 +168,12 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$count = 0;
 		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
 
-		    // divide price by spaces for per-ticket price
-		    // we divide this way rather than by $EM_Ticket because that can be changed by user in future,
-		    // yet $EM_Ticket_Booking will change if booking itself is saved.
+			// divide price by spaces for per-ticket price
+			// we divide this way rather than by $EM_Ticket because that can be changed by user in future,
+			// yet $EM_Ticket_Booking will change if booking itself is saved.
 
 			$spaces = $EM_Ticket_Booking->get_spaces();
-		    $price = $EM_Ticket_Booking->get_price() / $spaces;
+			$price = $EM_Ticket_Booking->get_price() / $spaces;
 
 			if( $price > 0 ){
 
@@ -230,7 +230,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strPost=$strPost . "&FailureURL=" . $this->get_payment_return_url();
 
 		// This is an Optional setting. Here we are just using the Billing names given.
-		$strPost=$strPost . "&CustomerName=" . $EM_Booking->get_person()->user_firstname . " " . $EM_Booking->get_person()->user_lastname;
+		$strPost=$strPost . "&CustomerName=" . substr( $EM_Booking->get_person()->user_firstname . " " . $EM_Booking->get_person()->user_lastname, 0, 100);
 
 		/* Email settings:
 		** Flag 'SendEMail' is an Optional setting.
@@ -239,13 +239,13 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		** 2 = Send Vendor Email but not Customer Email. If you do not supply this field, 1 is assumed and e-mails are sent if addresses are provided. **/
 		$strPost=$strPost . "&SendEMail=" . get_option('em_'. $this->gateway . '_send_email', 1);
 
-	    if (strlen( $EM_Booking->get_person()->user_email ) > 0) {
-	        $strPost=$strPost . "&CustomerEMail=" . $EM_Booking->get_person()->user_email;
-	    }
+		if (strlen( $EM_Booking->get_person()->user_email ) > 0) {
+				$strPost=$strPost . "&CustomerEMail=" . $EM_Booking->get_person()->user_email;
+		}
 
-	    if (strlen( get_option('em_'. $this->gateway . "_vendor_email" )) > 0  ) {
-		    $strPost=$strPost . "&VendorEMail=" . get_option('em_'. $this->gateway . "_vendor_email" );
-	    }
+		if (strlen( get_option('em_'. $this->gateway . "_vendor_email" )) > 0  ) {
+			$strPost=$strPost . "&VendorEMail=" . get_option('em_'. $this->gateway . "_vendor_email" );
+		}
 
 		// You can specify any custom message to send to your customers in their confirmation e-mail here
 		// The field can contain HTML if you wish, and be different for each order.  This field is optional
@@ -255,38 +255,38 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		// Billing Details + Delivery Details: (same as billing as we are not posting anything):
 		// Updated for version 1.2
 
-	    $delivery = '';
+		$delivery = '';
 
 		$names = explode(' ', $EM_Booking->get_person()->get_name());
 
-        if( !empty($names[0]) ) {
-        	$strPost.= "&BillingFirstnames=" . $names[0];
-        	$delivery.= "&DeliveryFirstnames=" . array_shift($names);
-        }
-        if( implode(' ',$names) != '' ) {
-        	$strPost.= "&BillingSurname=" . implode(' ',$names);
-        	$delivery.= "&DeliverySurname=" . implode(' ',$names);
-        }else{
-        	// Must have a value for this, so just use username if we don't have a surname
-        	$strPost.= "&BillingSurname=" . $EM_Booking->get_person()->get_name();
-        	$delivery.= "&DeliverySurname=" . $EM_Booking->get_person()->get_name();
-        }
-        if( EM_Gateways::get_customer_field('address', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingAddress1=" . EM_Gateways::get_customer_field('address', $EM_Booking);
-        	$delivery.= "&DeliveryAddress1=" . EM_Gateways::get_customer_field('address', $EM_Booking);
-        }
-        if( EM_Gateways::get_customer_field('address_2', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingAddress2=" . EM_Gateways::get_customer_field('address_2', $EM_Booking);
-        	$delivery.= "&DeliveryAddress2=" . EM_Gateways::get_customer_field('address_2', $EM_Booking);
-        }
-        if( EM_Gateways::get_customer_field('city', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingCity=" . EM_Gateways::get_customer_field('city', $EM_Booking);
-        	$delivery.= "&DeliveryCity=" . EM_Gateways::get_customer_field('city', $EM_Booking);
-        }
-        if( EM_Gateways::get_customer_field('zip', $EM_Booking) != '' ) {
-        	$strPost.= "&BillingPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
-        	$delivery.= "&DeliveryPostCode=" . EM_Gateways::get_customer_field('zip', $EM_Booking);
-        }
+		if( !empty($names[0]) ) {
+			$strPost.= "&BillingFirstnames=" . substr( $names[0], 0, 20);
+			$delivery.= "&DeliveryFirstnames=" . substr( array_shift($names), 0, 20);
+		}
+		if( implode(' ',$names) != '' ) {
+			$strPost.= "&BillingSurname=" . substr( implode(' ',$names), 0, 20);
+			$delivery.= "&DeliverySurname=" . substr( implode(' ',$names), 0, 20);
+		}else{
+			// Must have a value for this, so just use username if we don't have a surname
+			$strPost.= "&BillingSurname=" . substr( $EM_Booking->get_person()->get_name(), 0, 20);
+			$delivery.= "&DeliverySurname=" . substr( $EM_Booking->get_person()->get_name(), 0, 20);
+		}
+		if( EM_Gateways::get_customer_field('address', $EM_Booking) != '' ) {
+			$strPost.= "&BillingAddress1=" . substr( EM_Gateways::get_customer_field('address', $EM_Booking), 0, 100);
+			$delivery.= "&DeliveryAddress1=" . substr( EM_Gateways::get_customer_field('address', $EM_Booking), 0, 100);
+		}
+		if( EM_Gateways::get_customer_field('address_2', $EM_Booking) != '' ) {
+			$strPost.= "&BillingAddress2=" . substr( EM_Gateways::get_customer_field('address_2', $EM_Booking), 0, 100);
+			$delivery.= "&DeliveryAddress2=" . substr( EM_Gateways::get_customer_field('address_2', $EM_Booking), 0, 100);
+		}
+		if( EM_Gateways::get_customer_field('city', $EM_Booking) != '' ) {
+			$strPost.= "&BillingCity=" . substr( EM_Gateways::get_customer_field('city', $EM_Booking), 0, 40);
+			$delivery.= "&DeliveryCity=" . substr( EM_Gateways::get_customer_field('city', $EM_Booking), 0, 40);
+		}
+		if( EM_Gateways::get_customer_field('zip', $EM_Booking) != '' ) {
+			$strPost.= "&BillingPostCode=" . substr( EM_Gateways::get_customer_field('zip', $EM_Booking), 0 , 10);
+			$delivery.= "&DeliveryPostCode=" . substr( EM_Gateways::get_customer_field('zip', $EM_Booking), 0 , 10);
+		}
 
 		// tmp workaround for us state. v1.3
 		if( isset( $EM_Booking->booking_meta['booking']['us_state'] ) ) {
@@ -294,12 +294,12 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 			$strPost.= "&DeliveryState=" . $EM_Booking->booking_meta['booking']['us_state'];
 		}
 
-        if( EM_Gateways::get_customer_field('country', $EM_Booking) != '' ){
+		if( EM_Gateways::get_customer_field('country', $EM_Booking) != '' ){
 			$countries = em_get_countries();
 
 			//$country = $countries[EM_Gateways::get_customer_field('country', $EM_Booking)];
 			$country = EM_Gateways::get_customer_field('country', $EM_Booking);
-        	// Sanitise country codes (EM Countries gives options for England, Scotland, Wales and Northern Ireland which are not ISO compliant and are rejected by Sage).
+			// Sanitise country codes (EM Countries gives options for England, Scotland, Wales and Northern Ireland which are not ISO compliant and are rejected by Sage).
 			if( $country == 'XE' || $country == 'XI' || $country == 'XS' || $country == 'XW') {
 				$country = 'GB';
 			}
@@ -544,27 +544,27 @@ Events Manager
 		?>
 		<table class="form-table">
 		<tbody>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Success Message', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_booking_feedback" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback" )); ?>" style='width: 40em;' /><br />
-			  	<em><?php _e('The message that is shown to a user when a booking is successful whilst being redirected to Sage Pay for payment.','em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Success Free Message', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_booking_feedback_free" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback_free" )); ?>" style='width: 40em;' /><br />
-			  	<em><?php _e('If some cases if you allow a free ticket (e.g. pay at gate) as well as paid tickets, this message will be shown and the user will not be redirected to Sage Pay.','em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Thank You Message', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_booking_feedback_thanks" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback_thanks" )); ?>" style='width: 40em;' /><br />
-			  	<em><?php _e('If you choose to return users to the default Events Manager thank you page after a user has paid on Sage Pay, you can customize the thank you message here.','em-pro'); ?></em>
-			  </td>
-		  </tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Success Message', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_booking_feedback" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback" )); ?>" style='width: 40em;' /><br />
+					<em><?php _e('The message that is shown to a user when a booking is successful whilst being redirected to Sage Pay for payment.','em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Success Free Message', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_booking_feedback_free" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback_free" )); ?>" style='width: 40em;' /><br />
+					<em><?php _e('If some cases if you allow a free ticket (e.g. pay at gate) as well as paid tickets, this message will be shown and the user will not be redirected to Sage Pay.','em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Thank You Message', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_booking_feedback_thanks" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback_thanks" )); ?>" style='width: 40em;' /><br />
+					<em><?php _e('If you choose to return users to the default Events Manager thank you page after a user has paid on Sage Pay, you can customize the thank you message here.','em-pro'); ?></em>
+				</td>
+			</tr>
 		</tbody>
 		</table>
 
@@ -572,113 +572,113 @@ Events Manager
 
 		<table class="form-table">
 		<tbody>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Vendor Name', 'em-pro') ?></th>
-				  <td><input type="text" name="sagepay_form_vendor" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_vendor" )); ?>" />
-				  <br />
-				  <em><?php _e('Set this value to the Vendor Name assigned to you by Sage Pay or chosen when you applied', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Mode', 'em-pro') ?></th>
-			  <td>
-				  <select name="sagepay_form_status">
-					  <option value="live" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'live') echo 'selected="selected"'; ?>><?php _e('Live Site', 'em-pro') ?></option>
-					  <option value="test" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'test') echo 'selected="selected"'; ?>><?php _e('Test Site', 'em-pro') ?></option>
-					  <option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>
-				  </select>
-				  <br />
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay XOR Encryption password', 'em-pro') ?></th>
-				  <td><input type="text" name="sagepay_form_encryption_pass" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_encryption_pass" )); ?>" />
-				  <br />
-				  <em><?php _e('Set this value to the XOR Encryption password assigned to you by Sage Pay', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Currency', 'em-pro') ?></th>
-			  <td><?php echo esc_html(get_option('dbem_bookings_currency','GBP')); ?><br /><i><?php echo sprintf(__('Set your currency in the <a href="%s">settings</a> page.','dbem'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></i></td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Transaction Type', 'em-pro') ?></th>
-			  <td>
-				  <select name="sagepay_form_transaction_type">
-					  <option value="PAYMENT" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'PAYMENT') echo 'selected="selected"'; ?>><?php _e('Payment', 'em-pro') ?></option>
-					  <option value="DEFERRED" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'DEFERRED') echo 'selected="selected"'; ?>><?php _e('Deferred', 'em-pro') ?></option>
-					  <option value="AUTHENTICATE" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'AUTHENTICATE') echo 'selected="selected"'; ?>><?php _e('Authenticate', 'em-pro') ?></option>
-				  </select>
-				  <br />
-				  <em><?php _e('This can be DEFERRED or AUTHENTICATE if your Sage Pay account supports those payment types. If unsure, leave as PAYMENT', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Email Options', 'em-pro') ?></th>
-			  <td>
-				  <select name="sagepay_form_send_email">
-					  <option value="1" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 1) echo 'selected="selected"'; ?>><?php _e('Vendor & Customer', 'em-pro') ?></option>
-					  <option value="2" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 2) echo 'selected="selected"'; ?>><?php _e('Vendor Only', 'em-pro') ?></option>
-					  <option value="0" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 0) echo 'selected="selected"'; ?>><?php _e('None', 'em-pro') ?></option>
-				  </select>
-				  <br />
-				  <em><?php _e('Define who to send email to. For the vendor to be sent the email, enter vendor email below.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Vendor Email', 'em-pro') ?></th>
-				  <td><input type="text" name="sagepay_form_vendor_email" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_vendor_email" )); ?>" />
-				  <br />
-				  <em><?php _e('Set this to the mail address which will receive order confirmations and failures.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Partner ID', 'em-pro') ?></th>
-				  <td><input type="text" name="sagepay_form_partner_id" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_partner_id" )); ?>" />
-				  <br />
-				  <em><?php _e('Optional setting. If you are a Sage Pay Partner and wish to flag the transactions with your unique partner id set it here.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Sage Pay Encryption Type', 'em-pro') ?></th>
-			  <td>
-				  <select name="sagepay_form_encryption_type">
-					  <option value="AES" <?php if (get_option('em_'. $this->gateway . "_encryption_type" ) == 'AES') echo 'selected="selected"'; ?>><?php _e('AES', 'em-pro') ?></option>
-					  <option value="XOR" <?php if (get_option('em_'. $this->gateway . "_encryption_type" ) == 'XOR') echo 'selected="selected"'; ?>><?php _e('XOR', 'em-pro') ?></option>
-				  </select>
-				  <br />
-				  <em><?php _e('Encryption type should be left set to AES unless you are experiencing problems and have been told by SagePay support to change it.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Return Success URL', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_return_success" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_return_success" )); ?>" style='width: 40em;' /><br />
-			  	<em><?php _e('Once a payment is completed, users will sent to the My Bookings page which confirms that the payment has been made. If you would to customize the thank you page, create a new page and add the link here. Leave blank to return to default booking page with the thank you message specified above.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Return Fail URL', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_return_fail" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_return_fail" )); ?>" style='width: 40em;' /><br />
-			  	<em><?php _e('If a payment is unsucessful or if a user cancels, they will be redirected to the my bookings page. If you want a custom page instead, create a new page and add the link here.', 'em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Delete Bookings Pending Payment', 'em-pro') ?></th>
-			  <td>
-			  	<input type="text" name="sagepay_form_booking_timeout" style="width:50px;" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_timeout" )); ?>" style='width: 40em;' /> <?php _e('minutes','em-pro'); ?><br />
-			  	<em><?php _e('Once a booking is started and the user is taken to Sage Pay, Events Manager stores a booking record in the database to identify the incoming payment. These spaces may be considered reserved if you enable <em>Reserved unconfirmed spaces?</em> in your Events &gt; Settings page. If you would like these bookings to expire after x minutes, please enter a value above (note that bookings will be deleted, and any late payments will need to be refunded manually via Sage Pay).','em-pro'); ?></em>
-			  </td>
-		  </tr>
-		  <tr valign="top">
-			  <th scope="row"><?php _e('Manually approve completed transactions?', 'em-pro') ?></th>
-			  <td>
-			  	<input type="checkbox" name="sagepay_form_manual_approval" value="1" <?php echo (get_option('em_'. $this->gateway . "_manual_approval" )) ? 'checked="checked"':''; ?> /><br />
-			  	<em><?php _e('By default, when someone pays for a booking, it gets automatically approved once the payment is confirmed. If you would like to manually verify and approve bookings, tick this box.','em-pro'); ?></em><br />
-			  	<em><?php echo sprintf(__('Approvals must also be required for all bookings in your <a href="%s">settings</a> for this to work properly.','em-pro'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></em>
-			  </td>
-		  </tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Vendor Name', 'em-pro') ?></th>
+					<td><input type="text" name="sagepay_form_vendor" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_vendor" )); ?>" />
+					<br />
+					<em><?php _e('Set this value to the Vendor Name assigned to you by Sage Pay or chosen when you applied', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Mode', 'em-pro') ?></th>
+				<td>
+					<select name="sagepay_form_status">
+						<option value="live" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'live') echo 'selected="selected"'; ?>><?php _e('Live Site', 'em-pro') ?></option>
+						<option value="test" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'test') echo 'selected="selected"'; ?>><?php _e('Test Site', 'em-pro') ?></option>
+						<option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>
+					</select>
+					<br />
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay XOR Encryption password', 'em-pro') ?></th>
+					<td><input type="text" name="sagepay_form_encryption_pass" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_encryption_pass" )); ?>" />
+					<br />
+					<em><?php _e('Set this value to the XOR Encryption password assigned to you by Sage Pay', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Currency', 'em-pro') ?></th>
+				<td><?php echo esc_html(get_option('dbem_bookings_currency','GBP')); ?><br /><i><?php echo sprintf(__('Set your currency in the <a href="%s">settings</a> page.','dbem'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></i></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Transaction Type', 'em-pro') ?></th>
+				<td>
+					<select name="sagepay_form_transaction_type">
+						<option value="PAYMENT" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'PAYMENT') echo 'selected="selected"'; ?>><?php _e('Payment', 'em-pro') ?></option>
+						<option value="DEFERRED" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'DEFERRED') echo 'selected="selected"'; ?>><?php _e('Deferred', 'em-pro') ?></option>
+						<option value="AUTHENTICATE" <?php if (get_option('em_'. $this->gateway . "_transaction_type" ) == 'AUTHENTICATE') echo 'selected="selected"'; ?>><?php _e('Authenticate', 'em-pro') ?></option>
+					</select>
+					<br />
+					<em><?php _e('This can be DEFERRED or AUTHENTICATE if your Sage Pay account supports those payment types. If unsure, leave as PAYMENT', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Email Options', 'em-pro') ?></th>
+				<td>
+					<select name="sagepay_form_send_email">
+						<option value="1" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 1) echo 'selected="selected"'; ?>><?php _e('Vendor & Customer', 'em-pro') ?></option>
+						<option value="2" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 2) echo 'selected="selected"'; ?>><?php _e('Vendor Only', 'em-pro') ?></option>
+						<option value="0" <?php if (get_option('em_'. $this->gateway . "_send_email" ) == 0) echo 'selected="selected"'; ?>><?php _e('None', 'em-pro') ?></option>
+					</select>
+					<br />
+					<em><?php _e('Define who to send email to. For the vendor to be sent the email, enter vendor email below.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Vendor Email', 'em-pro') ?></th>
+					<td><input type="text" name="sagepay_form_vendor_email" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_vendor_email" )); ?>" />
+					<br />
+					<em><?php _e('Set this to the mail address which will receive order confirmations and failures.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Partner ID', 'em-pro') ?></th>
+					<td><input type="text" name="sagepay_form_partner_id" value="<?php esc_attr_e( get_option('em_'. $this->gateway . "_partner_id" )); ?>" />
+					<br />
+					<em><?php _e('Optional setting. If you are a Sage Pay Partner and wish to flag the transactions with your unique partner id set it here.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Sage Pay Encryption Type', 'em-pro') ?></th>
+				<td>
+					<select name="sagepay_form_encryption_type">
+						<option value="AES" <?php if (get_option('em_'. $this->gateway . "_encryption_type" ) == 'AES') echo 'selected="selected"'; ?>><?php _e('AES', 'em-pro') ?></option>
+						<option value="XOR" <?php if (get_option('em_'. $this->gateway . "_encryption_type" ) == 'XOR') echo 'selected="selected"'; ?>><?php _e('XOR', 'em-pro') ?></option>
+					</select>
+					<br />
+					<em><?php _e('Encryption type should be left set to AES unless you are experiencing problems and have been told by SagePay support to change it.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Return Success URL', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_return_success" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_return_success" )); ?>" style='width: 40em;' /><br />
+					<em><?php _e('Once a payment is completed, users will sent to the My Bookings page which confirms that the payment has been made. If you would to customize the thank you page, create a new page and add the link here. Leave blank to return to default booking page with the thank you message specified above.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Return Fail URL', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_return_fail" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_return_fail" )); ?>" style='width: 40em;' /><br />
+					<em><?php _e('If a payment is unsucessful or if a user cancels, they will be redirected to the my bookings page. If you want a custom page instead, create a new page and add the link here.', 'em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Delete Bookings Pending Payment', 'em-pro') ?></th>
+				<td>
+					<input type="text" name="sagepay_form_booking_timeout" style="width:50px;" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_timeout" )); ?>" style='width: 40em;' /> <?php _e('minutes','em-pro'); ?><br />
+					<em><?php _e('Once a booking is started and the user is taken to Sage Pay, Events Manager stores a booking record in the database to identify the incoming payment. These spaces may be considered reserved if you enable <em>Reserved unconfirmed spaces?</em> in your Events &gt; Settings page. If you would like these bookings to expire after x minutes, please enter a value above (note that bookings will be deleted, and any late payments will need to be refunded manually via Sage Pay).','em-pro'); ?></em>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Manually approve completed transactions?', 'em-pro') ?></th>
+				<td>
+					<input type="checkbox" name="sagepay_form_manual_approval" value="1" <?php echo (get_option('em_'. $this->gateway . "_manual_approval" )) ? 'checked="checked"':''; ?> /><br />
+					<em><?php _e('By default, when someone pays for a booking, it gets automatically approved once the payment is confirmed. If you would like to manually verify and approve bookings, tick this box.','em-pro'); ?></em><br />
+					<em><?php echo sprintf(__('Approvals must also be required for all bookings in your <a href="%s">settings</a> for this to work properly.','em-pro'),EM_ADMIN_URL.'&amp;page=events-manager-options'); ?></em>
+				</td>
+			</tr>
 		</tbody>
 		</table>
 
