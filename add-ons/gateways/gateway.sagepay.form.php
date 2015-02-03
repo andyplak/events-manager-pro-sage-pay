@@ -406,7 +406,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strStatus = $values['Status'];
 		$strStatusDetail = $values['StatusDetail'];
 		$strVendorTxCode = $values["VendorTxCode"];
-		$strVPSTxId = $values["VPSTxId"];
+		$strVPSTxId = substr($values["VPSTxId"], 1, -1); // remove curly braces
 		$strTxAuthNo = $values["TxAuthNo"];
 		$strAmount = $values["Amount"];
 		$strAVSCV2 = $values["AVSCV2"];
