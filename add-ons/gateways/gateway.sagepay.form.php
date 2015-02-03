@@ -732,7 +732,7 @@ EM_Gateways::register_gateway('sagepay_form', 'EM_Gateway_SagePay_Form');
 /**
  * Deletes bookings pending payment that are more than x minutes old, defined by Sage Pay options.
  */
-function em_gateway_sagepay_booking_timeout(){
+function em_gateway_sagepay_form_booking_timeout(){
 	global $wpdb;
 	//Get a time from when to delete
 	$minutes_to_subtract = absint(get_option('em_sagepay_form_booking_timeout'));
@@ -748,4 +748,3 @@ function em_gateway_sagepay_booking_timeout(){
 	}
 }
 add_action('emp_cron_hook', 'em_gateway_sagepay_form_booking_timeout');
-?>
