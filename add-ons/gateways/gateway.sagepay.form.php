@@ -184,20 +184,21 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 				}
 
 				// Item Description
-				$strBasket .= strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
-				$strBasket  = str_replace($bask_sep, ' ', $strBasket ); // Remove any colons from within the event and ticket names
-				$strBasket .= $bask_sep;
+				$basket_item = strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
+				$basket_item  = str_replace($bask_sep, ' ', $strBasket ); // Remove any colons from within the event and ticket names
+				$basket_item .= $bask_sep;
 				// Quantity
-				$strBasket .= $spaces . $bask_sep;
+				$basket_item .= $spaces . $bask_sep;
 				// Item Value
-				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
+				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
 				// Item Tax
-				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
+				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
 				// Item Total
-				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
+				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
 				// Line Total
-				$strBasket .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
+				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
 
+				$strBasket .= $basket_item;
 				$count++;
 			}
 		}
@@ -731,7 +732,7 @@ EM_Gateways::register_gateway('sagepay_form', 'EM_Gateway_SagePay_Form');
 /**
  * Deletes bookings pending payment that are more than x minutes old, defined by Sage Pay options.
  */
-function em_gateway_sagepay_booking_timeout(){
+function em_gateway_sagepay_form_booking_timeout(){
 	global $wpdb;
 	//Get a time from when to delete
 	$minutes_to_subtract = absint(get_option('em_sagepay_form_booking_timeout'));
@@ -747,4 +748,3 @@ function em_gateway_sagepay_booking_timeout(){
 	}
 }
 add_action('emp_cron_hook', 'em_gateway_sagepay_form_booking_timeout');
-?>
