@@ -185,7 +185,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 				// Item Description
 				$basket_item = strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
-				$basket_item  = str_replace($bask_sep, ' ', $strBasket ); // Remove any colons from within the event and ticket names
+				$basket_item = str_replace($bask_sep, ' ', $basket_item ); // Remove any colons from within the event and ticket names
 				$basket_item .= $bask_sep;
 				// Quantity
 				$basket_item .= $spaces . $bask_sep;
@@ -204,7 +204,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		}
 
 		// strip off final seperator
-
 		$strBasket = substr( $strBasket, 0, -( strlen( $bask_sep ) ) );
 
 		// prepend basket count to strBasket
