@@ -353,7 +353,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 	}
 
 	function say_thanks(){
-		if( $_REQUEST['thanks'] == 1 ){
+		if( isset( $_REQUEST['thanks'] ) && $_REQUEST['thanks'] == 1 ) {
 			echo "<div class='em-booking-message em-booking-message-success'>".get_option('em_'.$this->gateway.'_booking_feedback_thanks').'</div>';
 		}
 	}
