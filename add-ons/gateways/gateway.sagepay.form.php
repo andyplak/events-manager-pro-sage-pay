@@ -161,55 +161,55 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		}
 
 		// Create basket for Sage Reconilation
-		$strBasket = '';
+		//$strBasket = '';
 		// Basket item seperator expected by sage
-		$bask_sep = ':';
+		//$bask_sep = ':';
 
-		$count = 0;
-		foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
+		//$count = 0;
+		//foreach( $EM_Booking->get_tickets_bookings()->tickets_bookings as $EM_Ticket_Booking ){
 
 			// divide price by spaces for per-ticket price
 			// we divide this way rather than by $EM_Ticket because that can be changed by user in future,
 			// yet $EM_Ticket_Booking will change if booking itself is saved.
 
-			$spaces = $EM_Ticket_Booking->get_spaces();
-			$price = $EM_Ticket_Booking->get_price() / $spaces;
+			//$spaces = $EM_Ticket_Booking->get_spaces();
+			//$price = $EM_Ticket_Booking->get_price() / $spaces;
 
-			if( $price > 0 ){
+			//if( $price > 0 ){
 
 				// Look for custom attribute that allows Sage stock reconciliation
-				$sage_prod_id = '';
-				if( array_key_exists('sage_prod_id', $EM_Ticket_Booking->get_booking()->get_event()->event_attributes ) ) {
-					$sage_prod_id = '['.$EM_Ticket_Booking->get_booking()->get_event()->event_attributes['sage_prod_id'].']';
-				}
+				//$sage_prod_id = '';
+				//if( array_key_exists('sage_prod_id', $EM_Ticket_Booking->get_booking()->get_event()->event_attributes ) ) {
+					//$sage_prod_id = '['.$EM_Ticket_Booking->get_booking()->get_event()->event_attributes['sage_prod_id'].']';
+				//}
 
 				// Item Description
-				$basket_item = strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
-				$basket_item = str_replace($bask_sep, ' ', $basket_item ); // Remove any colons from within the event and ticket names
-				$basket_item .= $bask_sep;
+				//$basket_item = strip_tags( $sage_prod_id . $EM_Ticket_Booking->get_booking()->get_event()->event_name.' - '.$EM_Ticket_Booking->get_ticket()->name );
+				//$basket_item = str_replace($bask_sep, ' ', $basket_item ); // Remove any colons from within the event and ticket names
+				//$basket_item .= $bask_sep;
 				// Quantity
-				$basket_item .= $spaces . $bask_sep;
+				//$basket_item .= $spaces . $bask_sep;
 				// Item Value
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
+				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
 				// Item Tax
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
+				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
 				// Item Total
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
+				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
 				// Line Total
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
+				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
 
-				$strBasket .= $basket_item;
-				$count++;
-			}
-		}
+				//$strBasket .= $basket_item;
+				//$count++;
+			//}
+		//}
 
 		// strip off final seperator
-		$strBasket = substr( $strBasket, 0, -( strlen( $bask_sep ) ) );
+		//$strBasket = substr( $strBasket, 0, -( strlen( $bask_sep ) ) );
 
 		// prepend basket count to strBasket
-		$strBasket = $count.$bask_sep.$strBasket;
+		//$strBasket = $count.$bask_sep.$strBasket;
 
-		$strPost=$strPost . "&Basket=" . $strBasket;
+		//$strPost=$strPost . "&Basket=" . $strBasket;
 
 		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 
