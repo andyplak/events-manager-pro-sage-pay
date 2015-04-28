@@ -190,13 +190,13 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 				// Quantity
 				$basket_item .= $spaces . $bask_sep;
 				// Item Value
-				$basket_item .= $EM_Ticket_Booking->get_ticket()->get_price_without_tax() . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_without_tax(), 2) . $bask_sep;
 				// Item Tax
-				$basket_item .= $EM_Ticket_Booking->get_ticket()->get_price_with_tax() - $EM_Ticket_Booking->get_ticket()->get_price_without_tax() . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() - $EM_Ticket_Booking->get_ticket()->get_price_without_tax() , 2). $bask_sep;
 				// Item Total
-				$basket_item .= $EM_Ticket_Booking->get_ticket()->get_price_with_tax() . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() , 2). $bask_sep;
 				// Line Total
-				$basket_item .= $EM_Ticket_Booking->get_ticket()->get_price_with_tax() * $spaces . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() * $spaces , 2). $bask_sep;
 
 				$strBasket .= $basket_item;
 				$count++;
