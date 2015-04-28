@@ -419,6 +419,11 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strCardType = $values["CardType"];
 		$strLast4Digits = $values["Last4Digits"];
 
+		// Since WP 4.2.1, data for insert must 'fit' in respective table field.
+		// EM limits us to 30 chars here, so trim it back
+		// Not ideal, but will do until we can get EM core changed.
+		$strVPSTxId = substr($strVPSTxId, 0, 30);
+
 		// Remove number formatting from $amount
 		// Ideally would like to use numfmt_parse, but that is 5.3 up, so a risk for EM customers
 		$strAmount = str_replace(',', '', $strAmount);
