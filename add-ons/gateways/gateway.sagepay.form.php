@@ -48,7 +48,9 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 	 */
 
 	/**
-	 * Modifies pending spaces calculations to include Sage Pay bookings, but only if Sage Pay bookings are set to time-out (i.e. they'll get deleted after x minutes), therefore can be considered as 'pending' and can be reserved temporarily.
+	 * Modifies pending spaces calculations to include Sage Pay bookings, but only if
+	 * Sage Pay bookings are set to time-out (i.e. they'll get deleted after x minutes),
+	 * therefore can be considered as 'pending' and can be reserved temporarily.
 	 * @param integer $count
 	 * @param EM_Bookings $EM_Bookings
 	 * @return integer
@@ -418,6 +420,11 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strCAVV = $values["CAVV"];
 		$strCardType = $values["CardType"];
 		$strLast4Digits = $values["Last4Digits"];
+
+		// Since WP 4.2.1, data for insert must 'fit' in respective table field.
+		// EM limits us to 30 chars here, so trim it back
+		// Not ideal, but will do until we can get EM core changed.
+		$strVPSTxId = substr($strVPSTxId, 0, 30);
 
 		// Remove number formatting from $amount
 		// Ideally would like to use numfmt_parse, but that is 5.3 up, so a risk for EM customers
