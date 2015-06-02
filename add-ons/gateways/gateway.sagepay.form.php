@@ -190,13 +190,13 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 				// Quantity
 				$basket_item .= $spaces . $bask_sep;
 				// Item Value
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_without_tax(), 2) . $bask_sep;
 				// Item Tax
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() - $EM_Ticket_Booking->get_ticket()->get_price_without_tax() , 2). $bask_sep;
 				// Item Total
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() , 2). $bask_sep;
 				// Line Total
-				$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
+				$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() * $spaces , 2). $bask_sep;
 
 				$strBasket .= $basket_item;
 				$count++;
@@ -418,6 +418,11 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strCAVV = $values["CAVV"];
 		$strCardType = $values["CardType"];
 		$strLast4Digits = $values["Last4Digits"];
+
+		// Since WP 4.2.1, data for insert must 'fit' in respective table field.
+		// EM limits us to 30 chars here, so trim it back
+		// Not ideal, but will do until we can get EM core changed.
+		$strVPSTxId = substr($strVPSTxId, 0, 30);
 
 		// Remove number formatting from $amount
 		// Ideally would like to use numfmt_parse, but that is 5.3 up, so a risk for EM customers
