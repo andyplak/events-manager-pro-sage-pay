@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Manager Pro - Sage Pay Form Gateway
-Plugin URI: http://wp-events-plugin.com
+Plugin URI: https://github.com/andyplak/events-manager-pro-sage-pay/
 Description: Sage Pay Form gateway plugin for Events Manager Pro
 Version: 1.5.7
 Depends: Events Manager Pro
