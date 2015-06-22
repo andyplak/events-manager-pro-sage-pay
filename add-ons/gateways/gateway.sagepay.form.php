@@ -591,7 +591,7 @@ Events Manager
 					<select name="sagepay_form_status">
 						<option value="live" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'live') echo 'selected="selected"'; ?>><?php _e('Live Site', 'em-pro') ?></option>
 						<option value="test" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'test') echo 'selected="selected"'; ?>><?php _e('Test Site', 'em-pro') ?></option>
-						<option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>
+						<!--<option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>-->
 					</select>
 					<br />
 				</td>
