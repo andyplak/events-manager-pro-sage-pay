@@ -154,7 +154,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$intRandNum = rand(0,32000)*rand(0,32000);
 		$strVendorTxCode= $EM_Booking->booking_id . "-" . $strTimeStamp . "-" . $intRandNum;
 
-		// Now to build the Form crypt field.  For more details see the Form Protocol 2.23
+		// Now to build the Form crypt field.
 		$strPost="VendorTxCode=" . $strVendorTxCode; /** As generated above **/
 
 		// Optional: If you are a Sage Pay Partner and wish to flag the transactions with your unique partner id, it should be passed here
@@ -192,13 +192,13 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 				// Quantity
 				//$basket_item .= $spaces . $bask_sep;
 				// Item Value
-				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_pre_taxes() / $spaces . $bask_sep;
+				//$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_without_tax(), 2) . $bask_sep;
 				// Item Tax
-				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_taxes() / $spaces . $bask_sep;
+				//$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() - $EM_Ticket_Booking->get_ticket()->get_price_without_tax() , 2). $bask_sep;
 				// Item Total
-				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() / $spaces . $bask_sep;
+				//$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() , 2). $bask_sep;
 				// Line Total
-				//$basket_item .= $EM_Ticket_Booking->get_booking()->get_price_post_taxes() . $bask_sep;
+				//$basket_item .= number_format( $EM_Ticket_Booking->get_ticket()->get_price_with_tax() * $spaces , 2). $bask_sep;
 
 				//$strBasket .= $basket_item;
 				//$count++;
@@ -329,7 +329,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$sagePayForm = new SagePayForm( $this->gateway );
 
 		$sagepay_vars = array(
-			"VPSProtocol" => "2.23",
+			"VPSProtocol" => "3.0",
 			"TxType" => get_option('em_'. $this->gateway . '_transaction_type', 'PAYMENT'),
 			'vendor' => get_option('em_'. $this->gateway . "_vendor" )
 		);
@@ -392,6 +392,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 		// Now check we have a Crypt field passed to this page
 		$strCrypt=$_REQUEST["crypt"];
+
 		if (strlen($strCrypt)==0) {
 			echo 'Error: Empty Sage Pay request, crypt missing.';
 			exit;
@@ -404,6 +405,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strDecoded = $sagePayForm->decodeAndDecrypt( $strCrypt );
 
 		$values = $sagePayForm->getToken( $strDecoded );
+
 		// Split out the useful information into variables we can use
 		$strStatus = $values['Status'];
 		$strStatusDetail = $values['StatusDetail'];
@@ -552,7 +554,7 @@ Events Manager
 		<table class="form-table">
 		<tbody>
 			<tr valign="top">
-				<th scope="row"><?php _e('Success Message', 'em-pro') ?></th>
+				<th scope="row"><?php _e('Redirecting Message', 'em-pro') ?></th>
 				<td>
 					<input type="text" name="sagepay_form_booking_feedback" value="<?php esc_attr_e(get_option('em_'. $this->gateway . "_booking_feedback" )); ?>" style='width: 40em;' /><br />
 					<em><?php _e('The message that is shown to a user when a booking is successful whilst being redirected to Sage Pay for payment.','em-pro'); ?></em>
@@ -592,7 +594,7 @@ Events Manager
 					<select name="sagepay_form_status">
 						<option value="live" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'live') echo 'selected="selected"'; ?>><?php _e('Live Site', 'em-pro') ?></option>
 						<option value="test" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'test') echo 'selected="selected"'; ?>><?php _e('Test Site', 'em-pro') ?></option>
-						<option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>
+						<!--<option value="simulator" <?php if (get_option('em_'. $this->gateway . "_status" ) == 'simulator') echo 'selected="selected"'; ?>><?php _e('Simulator', 'em-pro') ?></option>-->
 					</select>
 					<br />
 				</td>
