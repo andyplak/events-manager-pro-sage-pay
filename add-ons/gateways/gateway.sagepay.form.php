@@ -152,7 +152,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$intRandNum = rand(0,32000)*rand(0,32000);
 		$strVendorTxCode= $EM_Booking->booking_id . "-" . $strTimeStamp . "-" . $intRandNum;
 
-		// Now to build the Form crypt field.  For more details see the Form Protocol 2.23
+		// Now to build the Form crypt field.
 		$strPost="VendorTxCode=" . $strVendorTxCode; /** As generated above **/
 
 		// Optional: If you are a Sage Pay Partner and wish to flag the transactions with your unique partner id, it should be passed here
@@ -210,7 +210,6 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strBasket = $count.$bask_sep.$strBasket;
 
 		$strPost=$strPost . "&Basket=" . $strBasket;
-
 		$strPost=$strPost . "&Amount=" . number_format( $EM_Booking->get_price(), 2); // Formatted to 2 decimal places with leading digit
 
 		$currency = get_option('dbem_bookings_currency', 'GBP');
@@ -327,7 +326,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$sagePayForm = new SagePayForm( $this->gateway );
 
 		$sagepay_vars = array(
-			"VPSProtocol" => "2.23",
+			"VPSProtocol" => "3.0",
 			"TxType" => get_option('em_'. $this->gateway . '_transaction_type', 'PAYMENT'),
 			'vendor' => get_option('em_'. $this->gateway . "_vendor" )
 		);
@@ -390,6 +389,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 
 		// Now check we have a Crypt field passed to this page
 		$strCrypt=$_REQUEST["crypt"];
+
 		if (strlen($strCrypt)==0) {
 			echo 'Error: Empty Sage Pay request, crypt missing.';
 			exit;
@@ -402,6 +402,7 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 		$strDecoded = $sagePayForm->decodeAndDecrypt( $strCrypt );
 
 		$values = $sagePayForm->getToken( $strDecoded );
+
 		// Split out the useful information into variables we can use
 		$strStatus = $values['Status'];
 		$strStatusDetail = $values['StatusDetail'];

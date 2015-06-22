@@ -31,7 +31,7 @@ class SagePayForm {
 		
 		//$this->strVendorName = get_option('em_'. $this->gateway . "_vendor" );
 		$this->strEncryptionPassword = get_option('em_'. $this->gateway . '_encryption_pass'); 
-		$this->strEncryptionType = get_option('em_'. $this->gateway . '_encryption_pass');
+		$this->strEncryptionType = get_option('em_'. $this->gateway . '_encryption_type');
 	}
 	
 	
@@ -134,7 +134,11 @@ class SagePayForm {
 		"AddressStatus",
 		"CardType",
 		"Last4Digits",
-		"PayerStatus");
+		"PayerStatus",
+			"BankAuthCode",
+			"DeclineCode",
+			"ExpiryDate"
+		);
 	
 	  // Initialise arrays
 	  $output = array();
