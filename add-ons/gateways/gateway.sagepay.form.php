@@ -460,7 +460,9 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 						}
 					}
 					if( $strAmount >= $EM_Booking->get_price(false, false, true) && (!get_option('em_'.$this->gateway.'_manual_approval', false) || !get_option('dbem_bookings_approval')) ){
-						$EM_Booking->approve();
+						//$EM_Booking->approve();
+						// Quick fix for Split Pay for remainder payments when event fully booked
+						$EM_Booking->approve(true, true); // 2nd param is ignore_spaces
 					}else{
 						//TODO do something if sage pay payment not enough
 						$EM_Booking->set_status(0); //Set back to normal "pending"
