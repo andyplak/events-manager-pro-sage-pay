@@ -28,16 +28,16 @@ class EM_Gateway_SagePay_Form extends EM_Gateway {
 			add_action('em_template_my_bookings_header',array(&$this,'pay_fail_message')); //display error message back to customer
 			add_filter('em_my_bookings_booking_actions', array(&$this,'em_my_bookings_booking_actions'),1,2);
 			//set up cron
-			$timestamp = wp_next_scheduled('emp_cron_hook');
+			$timestamp = wp_next_scheduled('emp_sage_cron_hook');
 			if( absint(get_option('em_sagepay_form_booking_timeout')) > 0 && !$timestamp ){
-				$result = wp_schedule_event(time(),'em_minute','emp_cron_hook');
+				$result = wp_schedule_event(time(),'em_minute','emp_sage_cron_hook');
 			}elseif( !$timestamp ){
-				wp_unschedule_event($timestamp, 'emp_cron_hook');
+				wp_unschedule_event($timestamp, 'emp_sage_cron_hook');
 			}
 		}else{
 			//unschedule the cron
-			$timestamp = wp_next_scheduled('emp_cron_hook');
-			wp_unschedule_event($timestamp, 'emp_cron_hook');
+			$timestamp = wp_next_scheduled('emp_sage_cron_hook');
+			wp_unschedule_event($timestamp, 'emp_sage_cron_hook');
 		}
 	}
 
@@ -742,14 +742,15 @@ function em_gateway_sagepay_form_booking_timeout(){
 	//Get a time from when to delete
 	$minutes_to_subtract = absint(get_option('em_sagepay_form_booking_timeout'));
 	if( $minutes_to_subtract > 0 ){
+		$cut_off_time = date('Y-m-d H:i:s', current_time('timestamp') - ($minutes_to_subtract * 60));
 		//Run the SQL query
 		//first delete ticket_bookings with expired bookings
-		$sql = "DELETE FROM ".EM_TICKETS_BOOKINGS_TABLE." WHERE booking_id IN (SELECT booking_id FROM ".EM_BOOKINGS_TABLE." WHERE booking_date < TIMESTAMPADD(MINUTE, -{$minutes_to_subtract}, NOW()) AND booking_status=4);";
+		$sql = "DELETE FROM ".EM_TICKETS_BOOKINGS_TABLE." WHERE booking_id IN (SELECT booking_id FROM ".EM_BOOKINGS_TABLE." WHERE booking_date < '{$cut_off_time}' AND booking_status=4);";
 		$wpdb->query($sql);
+
 		//then delete the bookings themselves
-		$sql = "DELETE FROM ".EM_BOOKINGS_TABLE." WHERE booking_date < TIMESTAMPADD(MINUTE, -{$minutes_to_subtract}, NOW()) AND booking_status=4;";
+		$sql = "DELETE FROM ".EM_BOOKINGS_TABLE." WHERE booking_date < '{$cut_off_time}' AND booking_status=4;";
 		$wpdb->query($sql);
-		update_option('emp_result_try',$sql);
 	}
 }
-add_action('emp_cron_hook', 'em_gateway_sagepay_form_booking_timeout');
+add_action('emp_sage_cron_hook', 'em_gateway_sagepay_form_booking_timeout');
